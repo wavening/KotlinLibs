@@ -21,7 +21,6 @@ internal class PermissionImpl : AbsPermissionStrategy {
                 .fullExtensionEnable(BuildConfig.DEBUG)
                 .reportCallbackEnable(BuildConfig.DEBUG)
                 .permissionCallback(PermissionManager.PermissionCallback.Callback())
-
         }
 
         val instance: PermissionImpl = Holder.INSTANCE
