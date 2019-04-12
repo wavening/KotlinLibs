@@ -40,7 +40,7 @@ const val undefinedGroup: String = ""
 const val permissionRequestCode = 0x1111
 const val threadName: String = "threadName"
 @Suppress("UNUSED_EXPRESSION")
-fun doInThreadLooper(expression: Any) {
+internal fun doInThreadLooper(expression: Any) {
     Thread({
         Looper.prepare()
         val handler = Handler(Looper.myLooper())
@@ -49,9 +49,9 @@ fun doInThreadLooper(expression: Any) {
     }, threadName)
 }
 
-fun getPermissionGroupDescriptionByStringId(@StringRes resId: Int): String = Util.getApplication()?.getString(resId)!!
+internal fun getPermissionGroupDescriptionByStringId(@StringRes resId: Int): String = Util.getApplication()?.getString(resId)!!
 
-fun openSettingActivity(packageName: String) {
+internal fun openSettingActivity(packageName: String) {
     val intent = Intent()
     when (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD) {
         true -> {
@@ -73,8 +73,8 @@ fun openSettingActivity(packageName: String) {
     Util.getApplication()?.startActivity(intent)
 }
 
-val application: Application? = Util.getApplication()
-val getPermissions: Set<String> = try {
+internal val application: Application? = Util.getApplication()
+internal val getPermissions: Set<String> = try {
     val pm: PackageManager? = Util.getApplication()?.packageManager
     pm?.getPackageInfo(Util.getApplication()?.packageName, PackageManager.GET_PERMISSIONS)
         ?.requestedPermissions?.toSet()!!
@@ -85,6 +85,15 @@ val getPermissions: Set<String> = try {
     emptySet()
 
 }
+
+const val DOWNLOAD_NOTIFICATION_STYLE_0 = 0L
+const val DOWNLOAD_NOTIFICATION_STYLE_1 = 1L
+const val DOWNLOAD_NOTIFICATION_STYLE_2 = 2L
+const val DOWNLOAD_NOTIFICATION_STYLE_3 = 3L
+
+const val NETWORK_USAGE_STYLE_0 = 0L
+const val NETWORK_USAGE_STYLE_1 = 1L
+const val NETWORK_USAGE_STYLE_2 = 2L
 
 
 

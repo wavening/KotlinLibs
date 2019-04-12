@@ -2,6 +2,7 @@ package com.yww.utils.manager
 
 import android.app.Activity
 import android.os.Build
+import android.support.annotation.Keep
 import android.support.v7.app.AppCompatActivity
 import com.yww.utils.extension.getPermissions
 import com.yww.utils.util.LogUtil
@@ -20,64 +21,85 @@ import com.yww.utils.widget.PermissionFragmentV4
  * reportCallback -> log of permission check to report the process
  */
 
+@Keep
 class PermissionManager {
     private object Holder {
-        val INSTANCE = PermissionManager()
-
+       internal val INSTANCE = PermissionManager()
     }
 
     companion object {
+        @Keep
+        @JvmStatic
         val instance: PermissionManager = Holder.INSTANCE
         @Volatile
+        @Keep
+        @JvmStatic
         internal var permissionCallback: PermissionCallback = PermissionCallback.Callback()
         @Volatile
+        @Keep
+        @JvmStatic
         internal var reportCallbackEnable = false
         @Volatile
+        @Keep
+        @JvmStatic
         internal var reportCallback: ReportCallback = ReportCallback.Callback()
         @Volatile
+        @Keep
+        @JvmStatic
         internal var rationaleEnable = false
         @Volatile
+        @Keep
+        @JvmStatic
         internal var fullExtensionEnable = false
         @Volatile
+        @Keep
+        @JvmStatic
         private var strictModeEnable: Boolean = false
-
+        @Keep
+        @JvmStatic
         fun rationaleEnable(able: Boolean): PermissionManager.Companion {
             this.rationaleEnable = able
             return this@Companion
         }
-
+        @Keep
+        @JvmStatic
         fun fullExtensionEnable(enable: Boolean): PermissionManager.Companion {
             this.fullExtensionEnable = enable
             return this@Companion
         }
-
+        @Keep
+        @JvmStatic
         fun reportCallbackEnable(enable: Boolean): PermissionManager.Companion {
             this.reportCallbackEnable = enable
             return this@Companion
         }
-
+        @Keep
+        @JvmStatic
         fun reportCallback(callback: ReportCallback): PermissionManager.Companion {
             this.reportCallback = callback
             return this@Companion
         }
-
+        @Keep
+        @JvmStatic
         private fun strictModeEnable(enable: Boolean): PermissionManager.Companion {
             this.strictModeEnable = enable
             return this@Companion
         }
-
+        @Keep
+        @JvmStatic
         internal fun reportPermissionProcessInfo(info: String) = when (reportCallbackEnable) {
             true -> reportCallback.reportPermissionInfo(info)
             false -> Unit
         }
-
+        @Keep
+        @JvmStatic
         fun permissionCallback(callback: PermissionCallback): PermissionManager.Companion {
             permissionCallback = callback
             return this@Companion
         }
 
     }
-
+    @Keep
     fun requestPermission(activity: Activity, permissions: Set<String>) {
         val iterator = permissions.iterator()
         while (iterator.hasNext()) {
@@ -113,6 +135,7 @@ class PermissionManager {
         }
     }
 
+    @Keep
     interface PermissionCallback {
         fun onCheckStarted() {}
 
@@ -128,7 +151,7 @@ class PermissionManager {
 
         class Callback : PermissionCallback
     }
-
+    @Keep
     interface ReportCallback {
         fun reportPermissionInfo(info: String) {
             LogUtil.log(info)

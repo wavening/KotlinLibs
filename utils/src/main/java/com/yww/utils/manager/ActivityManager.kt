@@ -1,17 +1,20 @@
 package com.yww.utils.manager
 
 import android.app.Activity
+import android.support.annotation.Keep
 import java.util.*
 
 /**
  * @author  WAVENING
  */
+@Keep
 class ActivityManager {
     private object Holder {
-        val INSTANCE = ActivityManager()
+       internal val INSTANCE = ActivityManager()
     }
 
     companion object {
+        @Keep
         val instance:ActivityManager = Holder.INSTANCE
     }
 

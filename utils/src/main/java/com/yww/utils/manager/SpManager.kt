@@ -2,6 +2,7 @@ package com.yww.utils.manager
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.support.annotation.Keep
 import android.util.Log
 import com.yww.utils.util.Util
 import java.util.concurrent.ConcurrentHashMap
@@ -22,12 +23,16 @@ import java.util.concurrent.ConcurrentHashMap
  * you may can possibly get null in some kind of machine, you can {@link Util#init（application）}
  * to avoid that
  */
+@Keep
 class SpManager private constructor(name: String) {
     companion object {
         private val spMap: ConcurrentHashMap<String, SpManager> = ConcurrentHashMap()
         private val TAG = "SpManager"
         var name: String = TAG
             private set
+
+
+        @JvmStatic
         var instance: SpManager?
             get() {
                 return spMap.get(name)

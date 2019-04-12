@@ -7,7 +7,9 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Environment
 import android.support.annotation.IntRange
+import android.support.annotation.Keep
 import android.support.v4.util.ArrayMap
+import com.yww.utils.extension.*
 import com.yww.utils.extension.openSettingActivity
 import com.yww.utils.util.PackageUtil
 import com.yww.utils.util.Util
@@ -16,6 +18,7 @@ import com.yww.utils.util.Util
  * @Author  WAVENING
  * @Date    2019/3/22-10:05
  */
+@Keep
 class DownloadHelper private constructor() {
     private var downloadManager: DownloadManager =
         Util.getApplication()?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
@@ -26,12 +29,14 @@ class DownloadHelper private constructor() {
     }
 
     companion object {
+        @Keep
+        @JvmStatic
         val instance: DownloadHelper = Holder.INSTANCE
     }
 
     fun download(
         downloadUrl: String, title: String, fileName: String, description: String,
-        @IntRange(from = 0, to = 3) notifyStyle: Int, @IntRange(from = 1, to = 3) netStyle: Int
+        @IntRange(from = DOWNLOAD_NOTIFICATION_STYLE_0, to = DOWNLOAD_NOTIFICATION_STYLE_3) notifyStyle: Int, @IntRange(from = NETWORK_USAGE_STYLE_0, to = NETWORK_USAGE_STYLE_2) netStyle: Int
     ): Long {
         val request: DownloadManager.Request = DownloadManager.Request(Uri.parse(downloadUrl))
         request.setTitle(title)
