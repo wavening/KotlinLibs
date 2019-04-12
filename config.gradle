@@ -1,0 +1,83 @@
+ext {
+    mvpVersionCode = 1
+    mvpVersionName = '0.0.1'
+
+    compileSdkVersion = 28
+    minSdkVersion = 16
+    targetSdkVersion = 28
+    buildToolsVersion = '28.0.3'
+
+    gradle_version = '3.3.2'
+    support_version = '28.0.0'
+    kotlin_version = '1.3.21'
+    anko_version = '0.10.5'
+    leakcanary_version = '1.5.4'
+    multi_dex_version = "1.0.3"
+    constraint_version = "1.1.3"
+    runner_version = '1.0.2'
+    espresso_version = '3.0.2'
+    okhttp3_version = '3.12.0'
+
+    rxjava2_version = "2.1.12"
+    rxandroid2_version = "2.0.2"
+    retrofit2_version = "2.4.0"
+    gson_version = "2.8.2"
+
+    depend = [
+            // plugin
+            gradle                   : "com.android.tools.build:gradle:$gradle_version",
+            kotlin_gradle_plugin     : "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version",
+
+            // lib
+            support                  : [
+                    appcompat_v7: "com.android.support:appcompat-v7:$support_version",
+                    design      : "com.android.support:design:$support_version",
+                    recyclerview: "com.android.support:recyclerview-v7:$support_version",
+                    multidex    : "com.android.support:multidex:$multi_dex_version",
+            ],
+            constraint               : "com.android.support.constraint:constraint-layout:$constraint_version",
+            kotlin                   : [
+                    kotlin : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version",
+                    reflect: "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version",
+                    anko   : [
+                            common: "org.jetbrains.anko:anko-commons:$anko_version",
+                            design: "org.jetbrains.anko:anko-design:$anko_version",
+                    ]
+            ],
+            leakcanary               : [
+                    android      : "com.squareup.leakcanary:leakcanary-android:$leakcanary_version",
+                    android_no_op: "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanary_version",
+            ],
+            junit                    : "junit:junit:4.12",
+            androidTestImplementation: [
+                    runner  : "com.android.support.test:runner:$runner_version",
+                    espresso: "com.android.support.test.espresso:espresso-core:$espresso_version",
+            ],
+            okhttp3                  : "com.squareup.okhttp3:okhttp:$okhttp3_version",
+            rxjava2                  : [
+                    rxjava   : "io.reactivex.rxjava2:rxjava:$rxjava2_version",
+                    rxandroid: "io.reactivex.rxjava2:rxandroid:$rxandroid2_version",
+            ],
+            retrofit2                : [
+                    retrofit : "com.squareup.retrofit2:retrofit:$retrofit2_version",
+                    converter: "com.squareup.retrofit2:converter-gson:$retrofit2_version",
+                    adapter  : "com.squareup.retrofit2:adapter-rxjava2:$retrofit2_version",
+            ],
+            gson                     : "com.google.code.gson:gson:$gson_version",
+
+    ]
+    defaultConfig = this.&defaultConfig
+}
+
+def defaultConfig(Project project) {
+    project.android {
+        compileSdkVersion rootProject.compileSdkVersion
+        buildToolsVersion rootProject.buildToolsVersion
+        defaultConfig {
+            minSdkVersion rootProject.minSdkVersion
+            versionCode rootProject.mvpVersionCode
+            versionName rootProject.mvpVersionName
+            targetSdkVersion rootProject.targetSdkVersion
+        }
+    }
+}

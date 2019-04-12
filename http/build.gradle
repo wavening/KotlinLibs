@@ -1,0 +1,15 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+defaultConfig project
+
+dependencies {
+    compileOnly depend.kotlin.kotlin
+    compileOnly depend.okhttp3
+
+    compileOnly depend.retrofit2.retrofit
+    compileOnly depend.retrofit2.converter
+    compileOnly depend.retrofit2.adapter
+    compileOnly depend.gson
+}

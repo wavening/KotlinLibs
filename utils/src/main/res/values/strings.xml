@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Utils</string>
+
+    <string name="text_dialog_title_permission_request">权限申请</string>
+    <string name="text_dialog_content_permission_request">应用的正常使用需要权限:</string>
+    <string name="text_dialog_positive_permission_request">前往申请</string>
+    <string name="text_dialog_negative_permission_request">取消</string>
+    <string name="text_intent_activity_setting">android.settings.APPLICATION_DETAILS_SETTINGS</string>
+
+
+    <string name="text_permission_const_calendar_description">日历</string>
+    <string name="text_permission_const_camera_description">相机</string>
+    <string name="text_permission_const_contacts_description">联系人</string>
+    <string name="text_permission_const_location_description">定位</string>
+    <string name="text_permission_const_microphone_description">麦克风</string>
+    <string name="text_permission_const_phone_description">手机</string>
+    <string name="text_permission_const_sensor_description">传感器</string>
+    <string name="text_permission_const_sms_description">短信</string>
+    <string name="text_permission_const_storage_description">存储</string>
+</resources>
