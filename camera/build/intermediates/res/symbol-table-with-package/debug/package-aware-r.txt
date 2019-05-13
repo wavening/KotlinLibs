@@ -1,0 +1,2 @@
+com.yww.camera
+string app_name
