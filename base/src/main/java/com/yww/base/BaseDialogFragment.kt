@@ -11,8 +11,13 @@ import android.view.ViewGroup
  */
 abstract class BaseDialogFragment : DialogFragment() {
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(STYLE_NORMAL, android.R.style.Theme_Black_NoTitleBar)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var root: View? = null
+        var root: View? = getLayoutView()
         if (null == root) {
             if (0 == getLayoutId()) {
                 return super.onCreateView(inflater, container, savedInstanceState)
