@@ -3,10 +3,10 @@
           package="com.yww.mvplib">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.READ_PHONE_NUMBERS"/>
     <uses-permission android:name="android.permission.CALL_PHONE"/>
@@ -16,7 +16,6 @@
     <uses-permission android:name="android.permission.USE_SIP"/>
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
     <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS"/>
-
     <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
@@ -27,15 +26,21 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".ui.activity.TestSingleIntentActivity">
+        <activity android:name=".ui.activity.Camera2UsingActivity">
         </activity>
         <activity android:name=".ui.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <action android:name="android.intent.action.VIEW"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".ui.activity.CameraUseActivity"/>
+        <activity android:name=".ui.activity.TestSingleIntentActivity"/>
+        <activity android:name=".ui.activity.FragmentUseActivity"/>
+        <activity android:name=".ui.activity.DialogFragmentActivity"/>
+
     </application>
 
 </manifest>

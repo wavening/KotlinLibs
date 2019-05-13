@@ -9,12 +9,7 @@ import android.support.v7.app.AppCompatActivity
  */
 class AvoidResultActivityV7 constructor(activity: AppCompatActivity) {
     private val tag = "AvoidResultActivityV7"
-    private val avoidResultFragment: AvoidResultFragmentV4
-
-    init {
-        avoidResultFragment = getAvoidResultFragmentV4(activity)
-    }
-
+    private val avoidResultFragment: AvoidResultFragmentV4 = getAvoidResultFragmentV4(activity)
 
     fun startForResult(intent: Intent, requestCode: Int, callback: ActivityCallBack) {
         avoidResultFragment.startForResult(intent, requestCode, callback)

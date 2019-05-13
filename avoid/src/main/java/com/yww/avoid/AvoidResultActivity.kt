@@ -7,19 +7,15 @@ import android.content.Intent
 /**
  * @author  WAVENING
  */
-class AvoidResultActivity constructor(activity: Activity)  {
+class AvoidResultActivity constructor(activity: Activity) {
     private val TAG = "AvoidResultActivity"
-    private val avoidResultFragment: AvoidResultFragment
+    private val avoidResultFragment: AvoidResultFragment = getAvoidOnResultFragment(activity)
 
-    init {
-        avoidResultFragment = getAvoidOnResultFragment(activity)
-    }
-
-     fun startForResult(intent: Intent, requestCode: Int, callback: ActivityCallBack) {
+    fun startForResult(intent: Intent, requestCode: Int, callback: ActivityCallBack) {
         avoidResultFragment.startForResult(intent, requestCode, callback)
     }
 
-     fun startForResult(clazz: Class<*>, requestCode: Int, callback: ActivityCallBack) {
+    fun startForResult(clazz: Class<*>, requestCode: Int, callback: ActivityCallBack) {
         val intent = Intent(avoidResultFragment.activity, clazz)
         startForResult(intent, requestCode, callback)
     }

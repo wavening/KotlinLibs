@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">MvpLib</string>
+    //<!--menu-->
+    <!--fragment use bottom navigation-->
+    <string name="fragment_use_bottom_navigation_first">First Menu</string>
+    <string name="fragment_use_bottom_navigation_second">Second Menu</string>
+    //<!--menu-->
 
 </resources>

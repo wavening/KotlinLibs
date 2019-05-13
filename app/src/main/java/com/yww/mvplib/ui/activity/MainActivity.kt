@@ -10,6 +10,7 @@ import com.yww.mvplib.test.Test
 import com.yww.mvplib.ui.contract.ContractMain
 import com.yww.mvplib.ui.presenter.MainPresenter
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.startActivity
 
 class MainActivity : BaseActivity<ContractMain.MainView, MainPresenter>(), ContractMain.MainView {
 
@@ -21,13 +22,24 @@ class MainActivity : BaseActivity<ContractMain.MainView, MainPresenter>(), Contr
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        app_main_tv_dialog.setOnClickListener {
+        app_main_btn_permission.setOnClickListener {
             //            mPresenter.showMessage()
 //            Test().log()
 //            Test().startNextActivity(this@MainActivity)
 //            Test().testSpManager()
             Test().testPermissionManager(this@MainActivity)
 //            Test().testDownload()
+//            Test().testOpenManager()
+        }
+
+        app_main_btn_camera.setOnClickListener {
+            startActivity<CameraUseActivity>()
+        }
+        app_main_btn_fragment.setOnClickListener {
+            startActivity<FragmentUseActivity>()
+        }
+        app_main_btn_dialog_fragment.setOnClickListener {
+            startActivity<DialogFragmentActivity>()
         }
     }
 
@@ -35,13 +47,13 @@ class MainActivity : BaseActivity<ContractMain.MainView, MainPresenter>(), Contr
         super.onResume()
         val filter = IntentFilter()
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
-//        registerReceiver(networkReceiver,filter)
+        registerReceiver(networkReceiver, filter)
 
     }
 
     override fun onPause() {
         super.onPause()
-//        unregisterReceiver(networkReceiver)
+        unregisterReceiver(networkReceiver)
     }
 
 }

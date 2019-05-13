@@ -10,6 +10,8 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/avoid" />
+            <option value="$PROJECT_DIR$/base" />
+            <option value="$PROJECT_DIR$/camera" />
             <option value="$PROJECT_DIR$/download" />
             <option value="$PROJECT_DIR$/http" />
             <option value="$PROJECT_DIR$/mvp" />

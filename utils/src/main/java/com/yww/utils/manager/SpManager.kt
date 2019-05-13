@@ -10,16 +10,16 @@ import java.util.concurrent.ConcurrentHashMap
 /**
  * @author  WAVENING
  *
- * please read me first
+ * please read me first before using
  * this class can manager itself and control shared preference in itself
  * but when we use it in development, do not make multiple manager,just keep only one you need;
  * for example, in you custom application
- * do{
+ * do this action
  * SpManager.initManager("your custom name")
- * }
+ *
  * first ,then you can SpManager.INSTANCE to get the one SpManager you set everywhere
  *
- * ps：you may have noticed the code  {@link  Util#getApp() }
+ * ps：you may have noticed the code  {@link Util#getApp() }
  * you may can possibly get null in some kind of machine, you can {@link Util#init（application）}
  * to avoid that
  */
@@ -62,7 +62,6 @@ class SpManager private constructor(name: String) {
      * @param value    The value of sp.
      * false to use [SharedPreferences.Editor.apply]
      */
-    @JvmOverloads
     @Keep
     fun put(key: String, value: String) {
         sharedPre.edit().putString(key, value).apply()
@@ -74,7 +73,6 @@ class SpManager private constructor(name: String) {
      * @param key The key of sp.
      * @return the string value if sp exists or `""` otherwise
      */
-    @JvmOverloads
     @Keep
     fun getString(key: String): String? {
         return getString(key, "")
@@ -87,7 +85,6 @@ class SpManager private constructor(name: String) {
      * @param defaultValue The default value if the sp doesn't exist.
      * @return the string value if sp exists or `defaultValue` otherwise
      */
-    @JvmOverloads
     @Keep
     fun getString(key: String, defaultValue: String): String? {
         return sharedPre.getString(key, defaultValue)
@@ -99,7 +96,6 @@ class SpManager private constructor(name: String) {
      * @param key      The key of sp.
      * @param value    The value of sp.
      */
-    @JvmOverloads
     @Keep
     fun put(key: String, value: Int) {
         sharedPre.edit().putInt(key, value).apply()
@@ -111,7 +107,6 @@ class SpManager private constructor(name: String) {
      * @param key The key of sp.
      * @return the int value if sp exists or `-1` otherwise
      */
-    @JvmOverloads
     @Keep
     fun getInt(key: String): Int {
         return getInt(key, -1)
@@ -124,7 +119,6 @@ class SpManager private constructor(name: String) {
      * @param defaultValue The default value if the sp doesn't exist.
      * @return the int value if sp exists or `defaultValue` otherwise
      */
-    @JvmOverloads
     @Keep
     fun getInt(key: String, defaultValue: Int): Int {
         return sharedPre.getInt(key, defaultValue)
@@ -137,7 +131,6 @@ class SpManager private constructor(name: String) {
      * @param key      The key of sp.
      * @param value    The value of sp.
      */
-    @JvmOverloads
     @Keep
     fun put(key: String, value: Long) {
         sharedPre.edit().putLong(key, value).apply()
@@ -149,7 +142,6 @@ class SpManager private constructor(name: String) {
      * @param key The key of sp.
      * @return the long value if sp exists or `-1` otherwise
      */
-    @JvmOverloads
     @Keep
     fun getLong(key: String): Long {
         return getLong(key, -1L)
@@ -162,7 +154,6 @@ class SpManager private constructor(name: String) {
      * @param defaultValue The default value if the sp doesn't exist.
      * @return the long value if sp exists or `defaultValue` otherwise
      */
-    @JvmOverloads
     @Keep
     fun getLong(key: String, defaultValue: Long): Long {
         return sharedPre.getLong(key, defaultValue)
@@ -174,7 +165,6 @@ class SpManager private constructor(name: String) {
      * @param key      The key of sp.
      * @param value    The value of sp.
      */
-    @JvmOverloads
     @Keep
     fun put(key: String, value: Float) {
         sharedPre.edit().putFloat(key, value).apply()
@@ -186,7 +176,6 @@ class SpManager private constructor(name: String) {
      * @param key The key of sp.
      * @return the float value if sp exists or `-1f` otherwise
      */
-    @JvmOverloads
     @Keep
     fun getFloat(key: String): Float {
         return getFloat(key, -1f)
@@ -199,7 +188,6 @@ class SpManager private constructor(name: String) {
      * @param defaultValue The default value if the sp doesn't exist.
      * @return the float value if sp exists or `defaultValue` otherwise
      */
-    @JvmOverloads
     @Keep
     fun getFloat(key: String, defaultValue: Float): Float {
         return sharedPre.getFloat(key, defaultValue)
@@ -211,7 +199,6 @@ class SpManager private constructor(name: String) {
      * @param key      The key of sp.
      * @param value    The value of sp.
      */
-    @JvmOverloads
     @Keep
     fun put(key: String, value: Boolean) {
         sharedPre.edit().putBoolean(key, value).apply()
@@ -223,7 +210,6 @@ class SpManager private constructor(name: String) {
      * @param key The key of sp.
      * @return the boolean value if sp exists or `false` otherwise
      */
-    @JvmOverloads
     @Keep
     fun getBoolean(key: String): Boolean {
         return getBoolean(key, false)
@@ -236,7 +222,6 @@ class SpManager private constructor(name: String) {
      * @param defaultValue The default value if the sp doesn't exist.
      * @return the boolean value if sp exists or `defaultValue` otherwise
      */
-    @JvmOverloads
     @Keep
     fun getBoolean(key: String, defaultValue: Boolean): Boolean {
         return sharedPre.getBoolean(key, defaultValue)
@@ -250,7 +235,6 @@ class SpManager private constructor(name: String) {
      * @param isCommit True to use [SharedPreferences.Editor.commit],
      * false to use [SharedPreferences.Editor.apply]
      */
-    @JvmOverloads
     @Keep
     fun put(key: String, value: Set<String>) {
         sharedPre.edit().putStringSet(key, value).apply()
@@ -263,7 +247,6 @@ class SpManager private constructor(name: String) {
      * @return the set of string value if sp exists
      * or `Collections.<String>emptySet()` otherwise
      */
-    @JvmOverloads
     @Keep
     fun getStringSet(key: String): Set<String>? {
         return getStringSet(key, emptySet())
@@ -276,7 +259,6 @@ class SpManager private constructor(name: String) {
      * @param defaultValue The default value if the sp doesn't exist.
      * @return the set of string value if sp exists or `defaultValue` otherwise
      */
-    @JvmOverloads
     @Keep
     fun getStringSet(key: String, defaultValue: Set<String>): Set<String>? {
         return sharedPre.getStringSet(key, defaultValue)
@@ -287,7 +269,6 @@ class SpManager private constructor(name: String) {
      *
      * @return all values in sp
      */
-    @JvmOverloads
     @Keep
     fun getAll(): Map<String, *> {
         return sharedPre.getAll()
@@ -299,7 +280,6 @@ class SpManager private constructor(name: String) {
      * @param key The key of sp.
      * @return `true`: yes<br></br>`false`: no
      */
-    @JvmOverloads
     @Keep
     operator fun contains(key: String): Boolean {
         return sharedPre.contains(key)
@@ -313,16 +293,14 @@ class SpManager private constructor(name: String) {
      * @param isCommit True to use [SharedPreferences.Editor.commit],
      * false to use [SharedPreferences.Editor.apply]
      */
-    @JvmOverloads
     @Keep
-    fun remove(key: String, commit: Boolean) {
+    fun remove(key: String) {
         sharedPre.edit().remove(key).apply()
     }
 
     /**
      * Remove all preferences in sp.
      */
-    @JvmOverloads
     @Keep
     fun clear() = sharedPre.edit().clear().apply()
 

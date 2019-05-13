@@ -1,7 +1,6 @@
 package com.yww.utils.manager
 
 import android.app.Activity
-import android.os.Build
 import android.support.annotation.Keep
 import android.support.v7.app.AppCompatActivity
 import com.yww.utils.extension.getPermissions
@@ -24,7 +23,7 @@ import com.yww.utils.widget.PermissionFragmentV4
 @Keep
 class PermissionManager {
     private object Holder {
-       internal val INSTANCE = PermissionManager()
+        internal val INSTANCE = PermissionManager()
     }
 
     companion object {
@@ -55,50 +54,63 @@ class PermissionManager {
         @Keep
         @JvmStatic
         private var strictModeEnable: Boolean = false
+
         @Keep
         @JvmStatic
-        fun rationaleEnable(able: Boolean): PermissionManager.Companion {
+        fun rationaleEnable(able: Boolean): Companion {
             this.rationaleEnable = able
             return this@Companion
         }
+
         @Keep
         @JvmStatic
-        fun fullExtensionEnable(enable: Boolean): PermissionManager.Companion {
+        fun fullExtensionEnable(enable: Boolean): Companion {
             this.fullExtensionEnable = enable
             return this@Companion
         }
+
         @Keep
         @JvmStatic
-        fun reportCallbackEnable(enable: Boolean): PermissionManager.Companion {
+        fun reportCallbackEnable(enable: Boolean): Companion {
             this.reportCallbackEnable = enable
             return this@Companion
         }
+
         @Keep
         @JvmStatic
-        fun reportCallback(callback: ReportCallback): PermissionManager.Companion {
+        fun reportCallback(callback: ReportCallback): Companion {
             this.reportCallback = callback
             return this@Companion
         }
+
         @Keep
         @JvmStatic
-        private fun strictModeEnable(enable: Boolean): PermissionManager.Companion {
+        private fun strictModeEnable(enable: Boolean): Companion {
             this.strictModeEnable = enable
             return this@Companion
         }
+
         @Keep
         @JvmStatic
         internal fun reportPermissionProcessInfo(info: String) = when (reportCallbackEnable) {
             true -> reportCallback.reportPermissionInfo(info)
             false -> Unit
         }
+
         @Keep
         @JvmStatic
-        fun permissionCallback(callback: PermissionCallback): PermissionManager.Companion {
+        fun permissionCallback(callback: PermissionCallback): Companion {
             permissionCallback = callback
             return this@Companion
         }
 
     }
+
+    fun requestPermissionCallback(callback: PermissionCallback): PermissionManager {
+        permissionCallback = callback
+        return instance
+    }
+
     @Keep
     fun requestPermission(activity: Activity, permissions: Set<String>) {
         val iterator = permissions.iterator()
@@ -110,28 +122,11 @@ class PermissionManager {
                 false -> return reportPermissionProcessInfo("$permission has not registered in manifest")
             }
         }
-
         LogUtil.log("activity==$activity")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            try {
-                Class.forName("android.support.v7.app.AppCompatActivity")
-                Class.forName("android.support.v4.app.DialogFragment")
-                if (activity is AppCompatActivity) {
-                    PermissionFragmentV4(permissions).show(
-                        activity.supportFragmentManager, "permission request"
-                    )
-                } else {
-                    ClassNotFoundException("activity has not compile v7 jar ")
-                }
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-                PermissionFragment(permissions).show(
-                    activity.fragmentManager,
-                    "permission request"
-                )
-            }
-
+        if (activity is AppCompatActivity) {
+            PermissionFragmentV4(permissions).show(activity.supportFragmentManager, "permission request")
+        } else {
+            PermissionFragment(permissions).show(activity.fragmentManager, "permission request")
         }
     }
 
@@ -143,14 +138,15 @@ class PermissionManager {
 
         fun onDenied(deniedPermissions: Set<String>, deniedForeverPermissions: Set<String>) {}
 
-        fun allGranted() {}
+        fun onAllGranted(grantedPermissions: Set<String>) {}
 
-        fun allDenied() {}
+        fun onAllDenied(grantedPermissions: Set<String>) {}
 
         fun onCheckFinished() {}
 
         class Callback : PermissionCallback
     }
+
     @Keep
     interface ReportCallback {
         fun reportPermissionInfo(info: String) {

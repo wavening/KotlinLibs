@@ -32,14 +32,14 @@ internal class PermissionConst {
     private val microphone: Set<String> = setOf(permission.RECORD_AUDIO)
     private val phone: MutableSet<String> = mutableSetOf(
         permission.READ_PHONE_STATE,
-        permission.READ_PHONE_NUMBERS,
+//        permission.READ_PHONE_NUMBERS,
         permission.CALL_PHONE,
         permission.READ_CALL_LOG,
         permission.WRITE_CALL_LOG,
         permission.ADD_VOICEMAIL,
         permission.USE_SIP,
-        permission.PROCESS_OUTGOING_CALLS,
-        permission.ANSWER_PHONE_CALLS
+//        permission.ANSWER_PHONE_CALLS,
+        permission.PROCESS_OUTGOING_CALLS
     )
     private val phoneBelowO: Set<String> = phone.minus(phone.last())
     private val sensor: Set<String> = setOf(permission.BODY_SENSORS)

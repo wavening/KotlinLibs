@@ -7,4 +7,6 @@ defaultConfig project
 dependencies {
     compileOnly depend.support.appcompat_v7
     compileOnly depend.kotlin.kotlin
+
+    compileOnly project(path:':base')
 }

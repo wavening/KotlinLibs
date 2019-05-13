@@ -1,4 +1,4 @@
-package com.yww.mvplib.base
+package com.yww.base
 
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
@@ -10,11 +10,6 @@ import android.view.ViewGroup
  * @author  WAVENING
  */
 abstract class BaseDialogFragment : DialogFragment() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, android.R.style.Theme_Black_NoTitleBar)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var root: View? = getLayoutView()

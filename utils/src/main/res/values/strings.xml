@@ -13,7 +13,7 @@
     <string name="text_permission_const_contacts_description">联系人</string>
     <string name="text_permission_const_location_description">定位</string>
     <string name="text_permission_const_microphone_description">麦克风</string>
-    <string name="text_permission_const_phone_description">手机</string>
+    <string name="text_permission_const_phone_description">电话</string>
     <string name="text_permission_const_sensor_description">传感器</string>
     <string name="text_permission_const_sms_description">短信</string>
     <string name="text_permission_const_storage_description">存储</string>

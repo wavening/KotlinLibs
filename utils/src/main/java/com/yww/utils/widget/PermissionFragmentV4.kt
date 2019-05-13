@@ -1,34 +1,34 @@
 package com.yww.utils.widget
 
 import android.annotation.SuppressLint
+import android.annotation.TargetApi
 import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
-import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.DialogFragment
 import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.yww.base.BaseDialogFragment
 import com.yww.utils.R
 import com.yww.utils.annotation.PermissionConst
 import com.yww.utils.extension.doInThreadLooper
-import com.yww.utils.extension.openSettingActivity
 import com.yww.utils.extension.permissionRequestCode
 import com.yww.utils.manager.PermissionManager
-import com.yww.utils.util.Util
+import com.yww.utils.stragedy.brand.BrandStrategy
 
 /**
  * @Author  WAVENING
  * @Date    2019/3/19-13:36
  */
 @SuppressLint("ValidFragment")
-@RequiresApi(api = Build.VERSION_CODES.M)
-internal class PermissionFragmentV4(private val permissionsRequest: Set<String>) : DialogFragment() {
+
+internal class PermissionFragmentV4(private val permissionsRequest: Set<String>) : BaseDialogFragment() {
     /**
      *  before permission check ,first check permission state
      */
@@ -48,9 +48,9 @@ internal class PermissionFragmentV4(private val permissionsRequest: Set<String>)
         val iterator = permissionsRequest.iterator()
         while (iterator.hasNext()) {
             val permission = iterator.next()
-            when (checkSelfPermissionGranted(permission)) {
-                true -> checkedGrantedPermissions.add(permission)
-                false -> checkedDeniedPermissions.add(permission)
+            when {
+                checkSelfPermissionGranted(permission) -> checkedGrantedPermissions.add(permission)
+                else -> checkedDeniedPermissions.add(permission)
             }
         }
         reportInfo(
@@ -58,18 +58,20 @@ internal class PermissionFragmentV4(private val permissionsRequest: Set<String>)
                     " \n granted -> $checkedGrantedPermissions" +
                     " \n denied -> $checkedDeniedPermissions"
         )
-        when (checkedDeniedPermissions.isNullOrEmpty()) {
-            true -> doWhenAllPermissionRequestGrantedDirectly()
-            false -> {
+        when {
+            checkedDeniedPermissions.isNullOrEmpty() -> doWhenAllPermissionRequestGrantedDirectly(
+                checkedGrantedPermissions
+            )
+            else -> {
                 checkedDeniedPermissions.forEach {
-                    when (shouldShowPermissionRationale(it)) {
-                        true -> Unit
-                        false -> checkedDeniedForeverPermissions.add(it)
+                    when {
+                        shouldShowPermissionRationale(it) -> Unit
+                        else -> checkedDeniedForeverPermissions.add(it)
                     }
                 }
-                when (checkedDeniedPermissions.isNullOrEmpty()) {
-                    true -> Unit
-                    false -> requestPermissionWhenRationaleFalse(checkedDeniedPermissions)
+                when {
+                    checkedDeniedPermissions.isNullOrEmpty() -> Unit
+                    else -> requestPermissionWhenRationaleFalse(checkedDeniedPermissions)
                 }
             }
         }
@@ -87,13 +89,13 @@ internal class PermissionFragmentV4(private val permissionsRequest: Set<String>)
         if (permissionRequestCode == requestCode && permissions.size == grantResults.size) {
             var i = 0
             while (i < grantResults.size) {
-                when (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                    true -> grantedPermissions.add(permissions[i])
-                    false -> {
+                when (grantResults[i]) {
+                    PackageManager.PERMISSION_GRANTED -> grantedPermissions.add(permissions[i])
+                    else -> {
                         deniedPermissions.add(permissions[i])
-                        when (shouldShowPermissionRationale(permissions[i])) {
-                            true -> Unit
-                            false -> deniedForeverPermissions.add(permissions[i])
+                        when {
+                            shouldShowPermissionRationale(permissions[i]) -> Unit
+                            else -> deniedForeverPermissions.add(permissions[i])
                         }
                     }
                 }
@@ -106,9 +108,9 @@ internal class PermissionFragmentV4(private val permissionsRequest: Set<String>)
     private fun doWhenAllPermissionsHandled(permissions: Set<String>) {
         PermissionManager.permissionCallback.onGranted(grantedPermissions)
         PermissionManager.permissionCallback.onDenied(deniedPermissions, deniedForeverPermissions)
-        when (grantedPermissions == permissions) {
-            true -> doWhenAllPermissionRequestGranted()
-            false -> doWhenHasPermissionsRequestDenied()
+        when (grantedPermissions) {
+            permissions -> doWhenAllPermissionRequestGranted(grantedPermissions)
+            else -> doWhenHasPermissionsRequestDenied()
         }
     }
 
@@ -120,27 +122,28 @@ internal class PermissionFragmentV4(private val permissionsRequest: Set<String>)
 
     private fun doWhenHasPermissionsRequestDenied() {
         reportInfo("permissions denied => $deniedPermissions")
-        when (deniedPermissions == when (PermissionManager.fullExtensionEnable) {
-            true -> PermissionConst.instance.getGroupPermissionsByPermissionName(permissionsRequest)
-            false -> permissionsRequest
-        }) {
-            true -> PermissionManager.permissionCallback.allDenied()
-            false -> Unit
+        when (deniedPermissions) {
+            when {
+                PermissionManager.fullExtensionEnable ->
+                    PermissionConst.instance.getGroupPermissionsByPermissionName(permissionsRequest)
+                else -> permissionsRequest
+            } -> PermissionManager.permissionCallback.onAllDenied(deniedPermissions)
+            else -> Unit
         }
-        when (PermissionManager.rationaleEnable) {
-            true -> showRequestRationaleDialog(deniedPermissions)
-            false -> dismissAllowingStateLoss()
+        when {
+            PermissionManager.rationaleEnable -> showRequestRationaleDialog(deniedPermissions)
+            else -> dismissAllowingStateLoss()
         }
     }
 
-    private fun doWhenAllPermissionRequestGrantedDirectly() {
+    private fun doWhenAllPermissionRequestGrantedDirectly(grantedPermissions: Set<String>) {
         reportInfo("all permissions granted directly")
-        doWhenAllPermissionRequestGranted()
+        doWhenAllPermissionRequestGranted(grantedPermissions)
     }
 
-    private fun doWhenAllPermissionRequestGranted() {
+    private fun doWhenAllPermissionRequestGranted(grantedPermissions: Set<String>) {
         reportInfo("all permissions granted")
-        PermissionManager.permissionCallback.allGranted()
+        PermissionManager.permissionCallback.onAllGranted(grantedPermissions)
         dismissAllowingStateLoss()
     }
 
@@ -155,9 +158,10 @@ internal class PermissionFragmentV4(private val permissionsRequest: Set<String>)
     }
 
     private fun findExactPermissions(permissions: Set<String>) {
-        val allPermissions: Set<String> = when (PermissionManager.fullExtensionEnable) {
-            true -> PermissionConst.instance.getGroupPermissionsByPermissionName(permissions)
-            false -> permissions
+        val allPermissions: Set<String> = when {
+            PermissionManager.fullExtensionEnable ->
+                PermissionConst.instance.getGroupPermissionsByPermissionName(permissions)
+            else -> permissions
         }
         reportInfo("request permissions for denied permissions actually => $allPermissions")
         requestPermissions(allPermissions.toTypedArray(), permissionRequestCode)
@@ -183,7 +187,7 @@ internal class PermissionFragmentV4(private val permissionsRequest: Set<String>)
     }
 
     private fun launchSettingActivity() {
-        openSettingActivity(Util.getApplication()?.packageName!!)
+        BrandStrategy.instance.openPageInPermissionManager()
     }
 
     private fun reportInfo(info: String) = PermissionManager.reportPermissionProcessInfo(info)

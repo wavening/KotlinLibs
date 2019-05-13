@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <group android:id="@+id/bottom_navigation_first_group">
+        <item android:id="@+id/bottom_navigation_first_group_first"
+              android:icon="@mipmap/ic_launcher_round"
+              android:title="@string/fragment_use_bottom_navigation_first"/>
+        <item android:id="@+id/bottom_navigation_first_group_second"
+              android:icon="@mipmap/ic_launcher_round"
+              android:title="@string/fragment_use_bottom_navigation_second"/>
+    </group>
+
+
 </menu>

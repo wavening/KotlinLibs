@@ -1,9 +1,9 @@
-package com.yww.mvplib.dialog
+package com.yww.mvplib.ui.dialog
 
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
-import com.yww.mvplib.base.BaseDialogFragment
+import com.yww.base.BaseDialogFragment
 import com.yww.mvplib.extension.indeterminateProgressDialog
 
 /**
@@ -29,7 +29,6 @@ class LoadingDialogFragment private constructor() : BaseDialogFragment() {
     }
 
     fun disturbDialogShowing() {
-
         dismissAllowingStateLoss()
     }
 }

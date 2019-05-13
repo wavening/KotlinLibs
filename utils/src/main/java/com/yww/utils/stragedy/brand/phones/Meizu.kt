@@ -8,17 +8,16 @@ import com.yww.utils.impl.IBrand
  * @Author  WAVENING
  * @Date    2019/4/25-17:45
  */
-internal class Flyme : IBrand.IManager {
+internal class Meizu : IBrand.IManager {
 
-    private val packagename = "packageName"
-    private val flymeAction = "com.meizu.safe.security.SHOW_APPSEC"
+    private val meizuAction = "com.meizu.safe.security.SHOW_APPSEC"
 
 
     override val managerIntent: Intent
             by lazy {
-                val intent = Intent(flymeAction)
+                val intent = Intent(meizuAction)
                 intent.categories.add(Intent.CATEGORY_DEFAULT)
-                intent.putExtra(packagename, packageName)
+                intent.putExtra("packageName", packageName)
                 intent
             }
 }

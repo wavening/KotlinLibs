@@ -3,6 +3,7 @@ package com.yww.utils
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.yww.utils.manager.DownloadHelper
+import com.yww.utils.stragedy.brand.BrandStrategy
 import com.yww.utils.stragedy.permission.PermissionStrategy
 import com.yww.utils.util.PackageUtil
 
@@ -28,5 +29,9 @@ object TestUtils {
             "http://pic24.nipic.com/20120906/2786001_082828452000_2.jpg"
             , "scene", "scene.jpg", "风景图片", 1, 1
         )
+    }
+
+    fun testOpenPhoneManager(){
+        BrandStrategy.instance.openPageInPermissionManager()
     }
 }

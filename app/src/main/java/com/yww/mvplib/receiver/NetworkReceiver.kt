@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.widget.Toast
+import com.yww.utils.util.NetUtil
 
 /**
  * @Author  WAVENING
@@ -12,11 +13,12 @@ import android.widget.Toast
  */
 open class NetworkReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
-        when(intent?.action){
-            ConnectivityManager.CONNECTIVITY_ACTION->{
-                Toast.makeText(context,"connect to internet!",Toast.LENGTH_SHORT).show()
+        when (intent?.action) {
+            ConnectivityManager.CONNECTIVITY_ACTION -> {
+                Toast.makeText(context, "connect to internet!", Toast.LENGTH_SHORT).show()
+                NetUtil.getNetworkType
             }
-            else ->return
+            else -> return
         }
 
     }

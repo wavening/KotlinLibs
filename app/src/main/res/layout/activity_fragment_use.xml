@@ -1,6 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent" android:layout_height="match_parent">
 
+
+    <FrameLayout
+            android:id="@+id/app_fragment_use_frame_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/app_fragment_use_radio_group"
+            android:layout_alignParentTop="true"/>
+
+    <RadioGroup
+            android:id="@+id/app_fragment_use_radio_group"
+            android:layout_width="match_parent"
+            android:weightSum="3"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_height="wrap_content">
+        <RadioButton
+                android:id="@+id/app_fragment_use_radio_button_first"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                style="@style/TabRadioButtonStyle"
+                android:layout_height="wrap_content"/>
+        <!--<RadioButton-->
+                <!--android:id="@+id/app_fragment_use_radio_button_second"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_weight="1"-->
+                <!--style="@style/TabRadioButtonStyle"-->
+                <!--android:layout_height="wrap_content"/>-->
+        <!--<RadioButton-->
+                <!--android:id="@+id/app_fragment_use_radio_button_third"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_weight="1"-->
+                <!--style="@style/TabRadioButtonStyle"-->
+                <!--android:layout_height="wrap_content"/>-->
+    </RadioGroup>
 </RelativeLayout>

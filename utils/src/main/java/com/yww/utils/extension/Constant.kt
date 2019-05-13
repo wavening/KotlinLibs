@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.provider.Settings
 import android.support.annotation.StringRes
 import com.yww.utils.util.Util
 
@@ -49,13 +48,22 @@ internal fun doInThreadLooper(expression: Any) {
     }, threadName)
 }
 
-internal fun getPermissionGroupDescriptionByStringId(@StringRes resId: Int): String = Util.getApplication()?.getString(resId)!!
+internal fun getPermissionGroupDescriptionByStringId(@StringRes resId: Int): String =
+    Util.getApplication()?.getString(resId)!!
 
-internal fun openSettingActivity(packageName: String) {
+internal fun openSetting(packageName: String) {
+    Util.getApplication()?.startActivity(settingIntent(packageName))
+}
+
+internal fun settingIntent(): Intent {
+    return settingIntent(packageName)
+}
+
+internal fun settingIntent(packageName: String): Intent {
     val intent = Intent()
     when (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD) {
         true -> {
-            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            intent.action = "android.settings.APPLICATION_DETAILS_SETTINGS"
             intent.data = Uri.fromParts("package", packageName, null)
         }
         false -> {
@@ -70,13 +78,18 @@ internal fun openSettingActivity(packageName: String) {
         }
     }
     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    return intent
+}
+
+internal fun openPage(intent: Intent) {
     Util.getApplication()?.startActivity(intent)
 }
 
 internal val application: Application? = Util.getApplication()
+internal val packageName: String = Util.getApplication()?.packageName!!
+internal val packageManager: PackageManager? = Util.getApplication()?.packageManager
 internal val getPermissions: Set<String> = try {
-    val pm: PackageManager? = Util.getApplication()?.packageManager
-    pm?.getPackageInfo(Util.getApplication()?.packageName, PackageManager.GET_PERMISSIONS)
+    packageManager?.getPackageInfo(Util.getApplication()?.packageName, PackageManager.GET_PERMISSIONS)
         ?.requestedPermissions?.toSet()!!
 } catch (e: PackageManager.NameNotFoundException) {
     e.printStackTrace()

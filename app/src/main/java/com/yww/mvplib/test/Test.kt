@@ -75,4 +75,8 @@ class Test {
     fun testDownload() {
         TestUtils.testDownloadSetting()
     }
+
+    fun  testOpenManager(){
+        TestUtils.testOpenPhoneManager()
+    }
 }

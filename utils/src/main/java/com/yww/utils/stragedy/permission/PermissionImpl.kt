@@ -2,7 +2,7 @@ package com.yww.utils.stragedy.permission
 
 import android.app.Activity
 import com.yww.utils.BuildConfig
-import com.yww.utils.impl.AbsPermissionStrategy
+import com.yww.utils.impl.IPermission
 import com.yww.utils.manager.PermissionManager
 import com.yww.utils.util.LogUtil
 
@@ -10,7 +10,7 @@ import com.yww.utils.util.LogUtil
  * @Author  WAVENING
  * @Date    2019/4/12-15:12
  */
-internal class PermissionImpl : AbsPermissionStrategy {
+internal class PermissionImpl : IPermission {
     private object Holder {
         val INSTANCE = PermissionImpl()
     }

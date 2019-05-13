@@ -5,6 +5,6 @@ import android.content.Context
 /**
  * @author  WAVENING
  */
-abstract class AbsCameraStragedy {
+abstract class AbsCameraStrategy {
     abstract fun cameraOrientation(context: Context):Int
 }

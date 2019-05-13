@@ -10,7 +10,6 @@ import android.support.annotation.IntRange
 import android.support.annotation.Keep
 import android.support.v4.util.ArrayMap
 import com.yww.utils.extension.*
-import com.yww.utils.extension.openSettingActivity
 import com.yww.utils.util.PackageUtil
 import com.yww.utils.util.Util
 
@@ -85,6 +84,6 @@ class DownloadHelper private constructor() {
     }
 
     fun openDownloadComponentSetting() {
-        openSettingActivity("com.android.providers.downloads")
+        openSetting("com.android.providers.downloads")
     }
 }

@@ -3,14 +3,12 @@ package com.yww.utils.widget
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.AlertDialog
+import android.app.DialogFragment
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.DialogFragment
-import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,8 +24,7 @@ import com.yww.utils.stragedy.brand.BrandStrategy
  * @Date    2019/3/19-13:36
  */
 @SuppressLint("ValidFragment")
-@TargetApi(Build.VERSION_CODES.M)
-internal class PermissionFragmentV4(private val permissionsRequest: Set<String>) : DialogFragment() {
+internal class PermissionFragment(private val permissionsRequest: Set<String>) : DialogFragment() {
     /**
      *  before permission check ,first check permission state
      */
@@ -113,11 +110,13 @@ internal class PermissionFragmentV4(private val permissionsRequest: Set<String>)
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     private fun checkSelfPermissionGranted(permission: String): Boolean =
-        ContextCompat.checkSelfPermission(activity!!, permission) == PackageManager.PERMISSION_GRANTED
+        context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
 
+    @TargetApi(Build.VERSION_CODES.M)
     private fun shouldShowPermissionRationale(deniedPermission: String): Boolean =
-        ActivityCompat.shouldShowRequestPermissionRationale(activity!!, deniedPermission)
+        shouldShowRequestPermissionRationale(deniedPermission)
 
     private fun doWhenHasPermissionsRequestDenied() {
         reportInfo("permissions denied => $deniedPermissions")
@@ -156,6 +155,7 @@ internal class PermissionFragmentV4(private val permissionsRequest: Set<String>)
         doInThreadLooper(findExactPermissions(permissions))
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     private fun findExactPermissions(permissions: Set<String>) {
         val allPermissions: Set<String> = when {
             PermissionManager.fullExtensionEnable ->

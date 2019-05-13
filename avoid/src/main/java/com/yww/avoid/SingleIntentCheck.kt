@@ -7,9 +7,8 @@ import android.os.SystemClock
  * @author  WAVENING
  */
 class SingleIntentCheck {
-    private var internal_time = 0L
-    private var click_tag = ""
-
+    private var internalTime = 0L
+    private var clickTag = ""
 
     private object Holder {
         val INSTANCE = SingleIntentCheck()
@@ -34,13 +33,13 @@ class SingleIntentCheck {
         } else {
             return result
         }
-        if (tag == click_tag && internal_time >= SystemClock.uptimeMillis() - click_interval_time) {
+        if (tag == clickTag && internalTime >= SystemClock.uptimeMillis() - click_interval_time) {
             //检查不通过
             return false
         }
         //记录启动标记和时间
-        click_tag = tag
-        internal_time = SystemClock.uptimeMillis()
+        clickTag = tag
+        internalTime = SystemClock.uptimeMillis()
         return result
     }
 

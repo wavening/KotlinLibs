@@ -2,7 +2,7 @@ package com.yww.utils.stragedy.permission
 
 import android.app.Activity
 import android.support.annotation.Keep
-import com.yww.utils.impl.AbsPermissionStrategy
+import com.yww.utils.impl.IPermission
 import com.yww.utils.util.LogUtil
 import java.lang.ref.WeakReference
 
@@ -13,7 +13,7 @@ import java.lang.ref.WeakReference
 @Keep
 class PermissionStrategy private constructor() {
 
-    private var strategyReference: WeakReference<AbsPermissionStrategy> = WeakReference(PermissionImpl.instance)
+    private var reference: WeakReference<IPermission> = WeakReference(PermissionImpl.instance)
 
     private object Holder {
         val INSTANCE = PermissionStrategy()
@@ -22,9 +22,9 @@ class PermissionStrategy private constructor() {
     companion object {
         @Keep
         @JvmStatic
-        fun init(strategy: AbsPermissionStrategy) {
-            if (strategy != this.instance.strategyReference.get())
-                this.instance.strategyReference = WeakReference(strategy)
+        fun init(strategy: IPermission) {
+            if (strategy != this.instance.reference.get())
+                this.instance.reference = WeakReference(strategy)
         }
 
         @Keep
@@ -33,19 +33,19 @@ class PermissionStrategy private constructor() {
     }
 
     init {
-        UnsupportedOperationException("please keep this singleton instance")
+        UnsupportedOperationException("please keep this singleton INSTANCE")
     }
 
     @Keep
     fun requestPermissions(activity: Activity, vararg permissions: String) {
         LogUtil.log("permissions==${permissions.toList()}")
-        strategyReference.get()?.requestPermissions(activity, permissions.toSet())
+        reference.get()?.requestPermissions(activity, permissions.toSet())
     }
 
     @Keep
     fun requestPermissions(activity: Activity, permissions: List<String>) {
         LogUtil.log("permissions==$permissions")
-        strategyReference.get()?.requestPermissions(activity, permissions.toSet())
+        reference.get()?.requestPermissions(activity, permissions.toSet())
     }
 
     @Keep
@@ -56,12 +56,12 @@ class PermissionStrategy private constructor() {
         while (iterator.hasNext()) {
             permissionSet.add(iterator.next().value)
         }
-        strategyReference.get()?.requestPermissions(activity, permissionSet)
+        reference.get()?.requestPermissions(activity, permissionSet)
     }
 
     @Keep
     fun requestPermissions(activity: Activity, permissions: Set<String>) {
         LogUtil.log("permissions==$permissions")
-        strategyReference.get()?.requestPermissions(activity, permissions)
+        reference.get()?.requestPermissions(activity, permissions)
     }
 }

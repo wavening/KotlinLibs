@@ -2,7 +2,7 @@ package com.yww.mvplib.base
 
 import android.os.Bundle
 import com.yww.mvp.BaseMvpActivity
-import com.yww.mvplib.dialog.LoadingDialogFragment
+import com.yww.mvplib.ui.dialog.LoadingDialogFragment
 import org.jetbrains.anko.toast
 
 

@@ -1,15 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.v4.widget.NestedScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.activity.MainActivity">
 
-    <TextView
-            android:id="@+id/app_main_tv_dialog"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hello World!"/>
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:orientation="vertical">
 
-</LinearLayout>
+        <android.support.v7.widget.AppCompatButton
+                android:id="@+id/app_main_btn_permission"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="测试权限"/>
+
+        <android.support.v7.widget.AppCompatButton
+                android:id="@+id/app_main_btn_camera"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="相机的使用"/>
+        <android.support.v7.widget.AppCompatButton
+                android:id="@+id/app_main_btn_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fragment的使用"/>
+        <android.support.v7.widget.AppCompatButton
+                android:id="@+id/app_main_btn_dialog_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="DialogFragment的使用"/>
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

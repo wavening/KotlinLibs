@@ -5,7 +5,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.yww.mvplib"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -27,13 +27,16 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-
-    implementation depend.support.recyclerview
     implementation project(path: ':mvp')
     implementation project(path: ':http')
     implementation project(path: ':rxjava2base')
     implementation project(path: ':avoid')
+    implementation project(path: ':base')
     implementation project(path: ':utils')
+    implementation project(path: ':camera')
+
+    implementation depend.support.recyclerview
+    implementation depend.support.design
 
     implementation depend.okhttp3
     implementation depend.kotlin.kotlin

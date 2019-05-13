@@ -1,1 +1,1 @@
-include ':app', ':mvp', ':http', ':rxjava2base', ':avoid', ':testlib', ':utils', ':download', ':widget'
+include ':app', ':mvp', ':http', ':rxjava2base', ':avoid', ':testlib', ':utils', ':download', ':widget', ':camera', ':base'
