@@ -92,11 +92,6 @@ class Camera2DialogFragment : BaseDialogFragment(), CameraAction {
         dismissAllowingStateLoss()
     }
 
-    //结束预览，关闭所有
-    private fun closeCameraPreview() {
-        stopPreview()
-    }
-
     override fun onResume() {
         super.onResume()
         startCameraThread()
@@ -129,19 +124,20 @@ class Camera2DialogFragment : BaseDialogFragment(), CameraAction {
 
     override fun onDestroy() {
         super.onDestroy()
+        imageReader?.close()
         setStyle(STYLE_NORMAL, android.R.style.Theme_Black_NoTitleBar)
     }
 
 
     //拉起弹窗
-    fun show(manger: FragmentManager) {
+    fun show(manager: FragmentManager) {
         if (showsDialog) {
             val transaction = fragmentManager?.beginTransaction()
             transaction?.remove(this)
             transaction?.commitAllowingStateLoss()
 //            dismissAllowingStateLoss()
         }
-        show(manger, "camera use dialog fragment")
+        show(manager, "camera device use dialog fragment")
     }
 
     //启动创建会话的子线程
@@ -219,14 +215,21 @@ class Camera2DialogFragment : BaseDialogFragment(), CameraAction {
                     val map: StreamConfigurationMap =
                         characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)!!
                     //根据TextureView的尺寸设置预览尺寸
+                    val orientation = holder.cameraStrategy.cameraOrientation(context)
                     optimalPreviewSize =
-                        selectOptimalPreviewSize(map.getOutputSizes(SurfaceTexture::class.java), width, height)
+                        selectOptimalPreviewSize(
+                            map.getOutputSizes(SurfaceTexture::class.java),
+                            width,
+                            height,
+                            orientation
+                        )
                     Log.e(
                         "camera preview",
                         "optimalPreviewSize==>width=${optimalPreviewSize.width},height=${optimalPreviewSize.height}"
                     )
                     //获取相机支持的最大拍照尺寸
-                    optimalCaptureSize = selectOptimalPictureSize(map.getOutputSizes(ImageFormat.JPEG), width, height)
+                    optimalCaptureSize =
+                        selectOptimalPictureSize(map.getOutputSizes(ImageFormat.JPEG), width, height, orientation)
                     Log.e(
                         "camera picture",
                         "optimalCaptureSize==>width=${optimalCaptureSize.width},height=${optimalCaptureSize.height}"
@@ -241,7 +244,7 @@ class Camera2DialogFragment : BaseDialogFragment(), CameraAction {
 
     //第四步
     //打开Camera2摄像头期间的回调
-    private val deviceCallback =
+    private val deviceCallback: CameraDevice.StateCallback =
         object : CameraDevice.StateCallback() {
             //当相机设备完成打开时调用的方法
             //此时，相机设备就可以使用了，可以调用CameraDevice.createCaptureSession()方法来设置第一个捕获会话。
@@ -299,7 +302,7 @@ class Camera2DialogFragment : BaseDialogFragment(), CameraAction {
 
     //第七步
     //创建会话回调
-    private val sessionCallback = object : CameraCaptureSession.StateCallback() {
+    private val sessionCallback: CameraCaptureSession.StateCallback = object : CameraCaptureSession.StateCallback() {
         //当摄像机设备完成了自身配置，会话可以开始处理捕获请求时，将调用此方法。
         //如果已经有捕获请求与会话一起排队，那么一旦调用这个回调，它们将开始处理，
         // 并且在调用这个回调之后，会话将立即调用 onActive()。
@@ -324,6 +327,7 @@ class Camera2DialogFragment : BaseDialogFragment(), CameraAction {
         cameraCaptureSession = session
         // 自动对焦
         requestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
+
         //captureBuilder,完成职责，进行保存，其他位置使用相同captureBuilder,先进行赋值
         session.setRepeatingRequest(requestBuilder.build(), null, cameraHandler)
     }
@@ -339,202 +343,94 @@ class Camera2DialogFragment : BaseDialogFragment(), CameraAction {
     }
 
     //选择sizeMap中宽高比最接近width和height的size
-    private fun selectOptimalPreviewSize(sizes: Array<Size>, width: Int, height: Int): Size {
-        assert(!sizes.isNullOrEmpty())
-        val list = mutableListOf<Size>()
-        var diffA = width.toDouble()
-        var diffB = width.toDouble()
-        var tempSize = Size(width, height)
-        var tempWidth: Int
-        var tempHeight: Int
-        for (size in sizes) {
-            //Android设备的width>height
-            Log.e("camera preview ", "size==>width=${size.width},height=${size.height}")
-            //比较视图宽高，保证使用的宽高在比较时，与手机对宽高的定义相同
-            //即width>height
-            when {
-                width >= height -> {
-                    tempWidth = size.width
-                    tempHeight = size.height
-                }
-                else -> {
-                    tempWidth = size.height
-                    tempHeight = size.width
-                }
-            }
-            when (tempWidth == width && tempHeight == height) {
-                //找到相同的size，直接使用
-                true -> return size
-                false -> when (tempWidth.toDouble() / tempHeight.toDouble() == width.toDouble() / height.toDouble()) {
-                    true -> when {
-                        tempWidth >= width -> when {
-                            Math.abs(tempWidth.toDouble() / width.toDouble()) < diffA -> {
-                                diffA = Math.abs(tempWidth.toDouble() / width.toDouble())
-                                tempSize = size
-                                Log.e(
-                                    "camera preview",
-                                    "  tempWidth >= width,满足条件diffA=$diffA,size=${size.width}*${size.height}"
-                                )
+    private fun selectOptimalPreviewSize(sizes: Array<Size>, width: Int, height: Int, orientation: Int): Size {
+        val tempWidth: Int
+        val tempHeight: Int
+        //根据设备的方向，确定宽高，确保与相机参数中的保持一致
+        //(一般情况下，size.width >= size.height)
+        if (1 == orientation || 3 == orientation) {
+            tempWidth = width
+            tempHeight = height
+        } else {
+            tempWidth = height
+            tempHeight = width
+        }
+        var optimalSize = Size(tempWidth, tempHeight)
+        return when {
+            sizes.isNullOrEmpty() -> optimalSize
+            sizes.size == 1 -> sizes[0]
+            else -> {
+                val list: MutableList<Size> = mutableListOf()
+                var delta =
+                    Math.abs(tempWidth.toDouble() / tempHeight.toDouble() - sizes[0].width.toDouble() / sizes[0].height.toDouble())
+                for (size in sizes) {
+                    when (size.width == tempWidth && size.height == tempHeight) {
+                        true -> return size
+                        false -> when (size.width.toDouble() / size.height.toDouble() == tempWidth.toDouble() / tempHeight.toDouble()) {
+                            true -> list.add(size)
+                            false -> when {
+                                Math.abs(tempWidth.toDouble() / tempHeight.toDouble() - size.width.toDouble() / size.height.toDouble()) < delta -> {
+                                    delta =
+                                        Math.abs(tempWidth.toDouble() / tempHeight.toDouble() - size.width.toDouble() / size.height.toDouble())
+                                    optimalSize = size
+                                }
+                                else -> Unit
                             }
-                            else -> Unit
-                        }
-                        else -> when {
-                            Math.abs(tempWidth.toDouble() / width.toDouble()) > diffA -> {
-                                diffA = Math.abs(tempWidth.toDouble() / width.toDouble())
-                                tempSize = size
-                                Log.e(
-                                    "camera preview",
-                                    "  tempWidth <= width,满足条件diffA=$diffA,size=${size.width}*${size.height}"
-                                )
-                            }
-                            else -> Unit
-                        }
-                    }
-                    false -> when {
-                        tempWidth >= width -> when {
-                            Math.abs(tempWidth.toDouble() / width.toDouble()) < diffB -> {
-                                diffB = Math.abs(tempWidth.toDouble() / width.toDouble())
-                                list.add(size)
-                                Log.e(
-                                    "camera preview",
-                                    "  tempWidth >= width,满足条件diffA=$diffB,size=${size.width}*${size.height}"
-                                )
-                            }
-                            else -> Unit
-                        }
-                        else -> when {
-                            Math.abs(tempWidth.toDouble() / width.toDouble()) > diffB -> {
-                                diffB = Math.abs(tempWidth.toDouble() / width.toDouble())
-                                list.add(size)
-                                Log.e(
-                                    "camera preview",
-                                    "  tempWidth <= width,满足条件diffA=$diffB,size=${size.width}*${size.height}"
-                                )
-                            }
-                            else -> Unit
                         }
                     }
                 }
-
-            }
-
-        }//for end
-        return when (tempSize) {
-            Size(width, height) -> when (list.size) {
-                0 -> {
-                    Log.e("camera preview", "直接返回第一项")
-                    sizes[0]
-                }
-                1 -> {
-                    Log.e("camera preview", "唯一满足条件的Size")
-                    list[0]
-                }
-                else -> {
-                    Log.e("camera preview", "选择最接近的Size")
-                    list.minBy { o1 -> Math.abs(o1.width * o1.height - width * height) }!!
+                return when {
+                    list.isNullOrEmpty() -> optimalSize
+                    list.size == 1 -> list[0]
+                    else -> list.minBy { Math.abs(tempWidth * tempHeight - it.width * it.height) }!!
                 }
             }
-            else -> tempSize
         }
     }
 
     //选择最适合的照片尺寸
-    private fun selectOptimalPictureSize(sizes: Array<Size>, width: Int, height: Int): Size {
-        assert(!sizes.isNullOrEmpty())
-        val list = mutableListOf<Size>()
-        var diffA = width.toDouble()
-        var diffB = width.toDouble()
-        var tempSize = Size(width, height)
-        var tempWidth: Int
-        var tempHeight: Int
-        for (size in sizes) {
-            //Android设备的width>height
-            Log.e("camera picture ", "size==>width=${size.width},height=${size.height}")
-            //比较视图宽高，保证使用的宽高在比较时，与手机对宽高的定义相同
-            //即width>height
-            when {
-                width >= height -> {
-                    tempWidth = size.width
-                    tempHeight = size.height
-                }
-                else -> {
-                    tempWidth = size.height
-                    tempHeight = size.width
-                }
-            }
-            when (tempWidth == width && tempHeight == height) {
-                //找到相同的size，直接使用
-                true -> return size
-                false -> when (tempWidth.toDouble() / tempHeight.toDouble() == width.toDouble() / height.toDouble()) {
-                    true -> when {
-                        tempWidth >= width -> when {
-                            Math.abs(tempWidth.toDouble() / width.toDouble()) < diffA -> {
-                                diffA = Math.abs(tempWidth.toDouble() / width.toDouble())
-                                tempSize = size
-                                Log.e(
-                                    "camera picture",
-                                    "  tempWidth >= width,满足条件diffA=$diffA,size=${size.width}*${size.height}"
-                                )
+    private fun selectOptimalPictureSize(sizes: Array<Size>, width: Int, height: Int, orientation: Int): Size {
+        val tempWidth: Int
+        val tempHeight: Int
+        //根据设备的方向，确定宽高，确保与相机参数中的保持一致
+        //(一般情况下，size.width >= size.height)
+        if (1 == orientation || 3 == orientation) {
+            tempWidth = width
+            tempHeight = height
+        } else {
+            tempWidth = height
+            tempHeight = width
+        }
+        var optimalSize = Size(tempWidth, tempHeight)
+        return when {
+            sizes.isNullOrEmpty() -> optimalSize
+            sizes.size == 1 -> sizes[0]
+            else -> {
+                val list: MutableList<Size> = mutableListOf()
+                var delta =
+                    Math.abs(tempWidth.toDouble() / tempHeight.toDouble() - sizes[0].width.toDouble() / sizes[0].height.toDouble())
+                for (size in sizes) {
+                    when (size.width == tempWidth && size.height == tempHeight) {
+                        true -> return size
+                        false -> when (size.width.toDouble() / size.height.toDouble() == tempWidth.toDouble() / tempHeight.toDouble()) {
+                            true -> list.add(size)
+                            false -> when {
+                                Math.abs(tempWidth.toDouble() / tempHeight.toDouble() - size.width.toDouble() / size.height.toDouble()) < delta -> {
+                                    delta =
+                                        Math.abs(tempWidth.toDouble() / tempHeight.toDouble() - size.width.toDouble() / size.height.toDouble())
+                                    optimalSize = size
+                                }
+                                else -> Unit
                             }
-                            else -> Unit
-                        }
-                        else -> when {
-                            Math.abs(tempWidth.toDouble() / width.toDouble()) > diffA -> {
-                                diffA = Math.abs(tempWidth.toDouble() / width.toDouble())
-                                tempSize = size
-                                Log.e(
-                                    "camera picture",
-                                    "  tempWidth <= width,满足条件diffA=$diffA,size=${size.width}*${size.height}"
-                                )
-                            }
-                            else -> Unit
-                        }
-                    }
-                    false -> when {
-                        tempWidth >= width -> when {
-                            Math.abs(tempWidth.toDouble() / width.toDouble()) < diffB -> {
-                                diffB = Math.abs(tempWidth.toDouble() / width.toDouble())
-                                list.add(size)
-                                Log.e(
-                                    "camera picture",
-                                    "  tempWidth >= width,满足条件diffA=$diffB,size=${size.width}*${size.height}"
-                                )
-                            }
-                            else -> Unit
-                        }
-                        else -> when {
-                            Math.abs(tempWidth.toDouble() / width.toDouble()) > diffB -> {
-                                diffB = Math.abs(tempWidth.toDouble() / width.toDouble())
-                                list.add(size)
-                                Log.e(
-                                    "camera picture",
-                                    "  tempWidth <= width,满足条件diffA=$diffB,size=${size.width}*${size.height}"
-                                )
-                            }
-                            else -> Unit
                         }
                     }
                 }
-
-            }
-
-        }//for end
-        return when (tempSize) {
-            Size(width, height) -> when (list.size) {
-                0 -> {
-                    Log.e("camera picture", "直接返回第一项")
-                    sizes[0]
-                }
-                1 -> {
-                    Log.e("camera picture", "唯一满足条件的Size")
-                    list[0]
-                }
-                else -> {
-                    Log.e("camera picture", "选择最接近的Size")
-                    list.minBy { o1 -> Math.abs(o1.width * o1.height - width * height) }!!
+                return when {
+                    list.isNullOrEmpty() -> optimalSize
+                    list.size == 1 -> list[0]
+                    else -> list.minBy { Math.abs(tempWidth * tempHeight - it.width * it.height) }!!
                 }
             }
-            else -> tempSize
         }
     }
 
@@ -582,7 +478,7 @@ class Camera2DialogFragment : BaseDialogFragment(), CameraAction {
         builder.addTarget(imageReader?.surface!!)
         builder.set(
             CaptureRequest.JPEG_ORIENTATION,
-            holder.orientationArray[holder.cameraStrategy.cameraOrientation(context!!)]
+            holder.orientationArray[holder.cameraStrategy.cameraOrientation(context)]
         )
         cameraCaptureSession?.stopRepeating()
         cameraCaptureSession?.capture(
@@ -605,6 +501,10 @@ class Camera2DialogFragment : BaseDialogFragment(), CameraAction {
         }
     }
 
+    //结束预览，关闭所有
+    private fun closeCameraPreview() {
+        stopPreview()
+    }
     private fun asyncSaver(image: Image): Runnable {
         return Runnable {
             val buffer = image.planes[0].buffer
@@ -630,6 +530,7 @@ class Camera2DialogFragment : BaseDialogFragment(), CameraAction {
                     e.printStackTrace()
                 }
             }
+            image.close()
         }
 
     }

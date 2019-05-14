@@ -7,7 +7,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
+        <android.support.v7.widget.AppCompatButton
+                android:id="@+id/app_camera_use_camera1_preview_take"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAllCaps="false"
+                android:text="Camera1预览及拍照"/>
         <android.support.v7.widget.AppCompatButton
                 android:id="@+id/app_camera_use_camera2_preview_take"
                 android:layout_width="match_parent"
